@@ -9,7 +9,7 @@ if __name__ == "__main__":
     conf = SparkConf().setAppName("python-word-count")
     sc = SparkContext(conf=conf)
 
-    text_file = sc.textFile("s3a://" + sys.argv[1])
+    text_file = sc.textFile("hdfs://" + sys.argv[1])
 
     raw_words = text_file.flatMap(lambda line: line.split(" ")).cache()
     distinct_words_count = raw_words.distinct().count()
