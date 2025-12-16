@@ -1,0 +1,25 @@
+import sys
+from pyspark import SparkContext, SparkConf
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: wordcount <input_folder>", file=sys.stderr)
+        sys.exit(-1)
+
+    conf = SparkConf().setAppName("python-word-count")
+    sc = SparkContext(conf=conf)
+
+    text_file = sc.textFile("s3a://" + sys.argv[1])
+
+    words = text_file.flatMap(lambda line: line.split(" ")) \
+		.map(lambda w: w.rstrip('.,')) \
+		.filter(lambda w: w.isalpha())
+
+	  longest_word = words.reduce(lambda w1, w2: w1 if len(w1) >= len(w2) else w2)
+
+	  print("--------------------------------------------")
+	  print("Longest word:", longest_word)
+	  print("Length:", len(longest_word))
+	  print("--------------------------------------------")
+
+
